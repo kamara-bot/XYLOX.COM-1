@@ -3,6 +3,12 @@ body{
     display:flex;
     justify-content: center;
     align-items: center;
+    background-image: url('../img/back.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-color: #000;
+    min-height: 100vh;
 }
 .wrapper{
     width: 95%;
