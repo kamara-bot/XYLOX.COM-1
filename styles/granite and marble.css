@@ -1,26 +1,48 @@
 body{
     width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
 }
 .backround-video{
     position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+.backround-video video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
 }
 .Granite_intro{
-    background-color:rgba(0, 0, 0, 0.5);
+    background-color: transparent;
     position: absolute;
-    top: 0%;
-    height: 95vh;
-    width: 100%;
+    top: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    height: auto;
+    width: 90%;
+    max-width: 600px;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    z-index: 10;
+    text-align: center;
 }
 .Granite_services_intro{
-    font-size: 5vw;
-    margin-left:5%;
-    height: 50px;
+    font-size: clamp(1.5rem, 5vw, 3rem);
+    margin-left: 0;
+    height: auto;
     color: aliceblue;
     z-index: 100;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    margin-bottom: 20px;
 }
 
 .stone{
@@ -32,10 +54,11 @@ body{
     justify-content: space-between;
 }
 .stone p{
-    font-size: 1.2rem;
-   text-align: center;
-   color: azure;
-   margin: 10px 0;
+    font-size: clamp(0.9rem, 2vw, 1.2rem);
+    text-align: center;
+    color: azure;
+    margin: 10px 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 .stone_image{
     width: 100%;
@@ -50,43 +73,50 @@ body{
 }
 
 .introduction_content{
-      width: 70%;
-      font-size: 150%;
+    width: 90%;
+    font-size: clamp(0.9rem, 2.5vw, 1.5rem);
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
 }
 .heading h2{
-    font-size:200%;
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    margin: 0;
 }
 .introduction_content p{
     text-align: center;
+    color: white;
+    line-height: 1.6;
 }
 @media screen and (max-width:900px){
     .container{
         width: 100%;
-        padding: 15px;
-        margin: 10px 0;
+        padding: 20px 5%;
+        margin: 0;
         gap: 15px;
+        margin-top: 15vh;
     }
     .stone {
         flex: 1 1 calc(50% - 15px);
-        min-width: 200px;
+        min-width: 180px;
     }
     .stone_image {
-        height: 200px;
+        height: 180px;
     }
     .stone p{
-        font-size: 1rem;
+        font-size: 0.95rem;
     }
     .introduction_content p{
         font-size: 1rem;
-        width: 90%;
+        width: 95%;
     }
     .heading h2{
-        font-size: 1.5rem;
+        font-size: 1.8rem;
     }
     .Granite_intro{
-        height: 50vh;
-        width: 100%;
-        padding-top: 20px;
+        top: 5%;
+        width: 95%;
     }
     .content_conclusion h4 {
         font-size: 1.5rem;
@@ -100,73 +130,92 @@ body{
 @media screen and (max-width:600px){
     .container{
         width: 100%;
-        padding: 10px;
-        margin: 10px 0;
+        padding: 15px 5%;
+        margin: 0;
         gap: 10px;
+        margin-top: 30vh;
     }
     .stone {
         flex: 1 1 calc(100% - 20px);
         min-width: 100%;
     }
     .stone_image {
-        height: 180px;
+        height: 150px;
     }
     .stone p{
-        font-size: 0.95rem;
+        font-size: 0.85rem;
     }
     .introduction_content {
-        width: 95%;
+        width: 100%;
         font-size: 0.9rem;
     }
     .introduction_content p{
-        font-size: 0.9rem;
+        font-size: 0.85rem;
     }
     .heading h2{
-        font-size: 1.2rem;
+        font-size: 1.3rem;
     }
     .Granite_intro{
-        height: 40vh;
+        top: 10%;
+        width: 95%;
+        padding: 10px;
+    }
+    .Granite_services_intro {
+        font-size: 1.2rem;
+        margin-left: 0;
         width: 100%;
-        padding-top: 10px;
-        padding-left: 10px;
-        padding-right: 10px;
+        text-align: center;
     }
     body{
         width: 100%;
         overflow-x: hidden;
     }
-    .Granite_services_intro {
-        font-size: 1rem;
-        margin-left: 0;
-        width: 100%;
-        text-align: center;
+    .backround-video{
+        height: 120vh;
     }
     .content_conclusion h4 {
         font-size: 1.2rem;
     }
     .content_conclusion p {
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         padding: 0 10px;
     }
 }
 
-@media screen and (max-height:400px){
+@media screen and (max-width:480px){
     .container{
-        width: 100%;
+        margin-top: 35vh;
+        padding: 10px 3%;
     }
-    .introduction_content p{
-        font-size: 60%;
+    .stone_image {
+        height: 120px;
+    }
+    .stone p{
+        font-size: 0.75rem;
     }
     .heading h2{
-        font-size: 150%;
+        font-size: 1.1rem;
+    }
+    .Granite_services_intro {
+        font-size: 1rem;
+    }
+    .introduction_content p{
+        font-size: 0.75rem;
+    }
+    .backround-video{
+        height: 150vh;
+    }
+}
+
+@media screen and (max-height:400px){
+    .backround-video{
+        height: 200vh;
+    }
+    .container {
+        margin-top: 20vh;
     }
     .Granite_intro{
-        height: 11%;
-        width: 100%;
-    }
-    video{
-        width:100%;
-        height: 100%;
+        top: 3%;
     }
 }
 .container, .content_conclusion{
@@ -175,10 +224,16 @@ body{
     align-items: flex-start;
     justify-items: center;
     flex-wrap: wrap;
-    padding: 5%;
-    margin: 20px;
-    border-radius: 3px;
+    padding: 30px 5%;
+    margin: 0;
+    border-radius: 0;
     gap: 20px;
+    position: relative;
+    z-index: 15;
+    margin-top: 20vh;
+}
+.container {
+    padding: 30px 5%;
 }
 .content_conclusion{
     font-family: roboto,Arial;
