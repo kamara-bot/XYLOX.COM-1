@@ -197,8 +197,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </div>
     </div>
     </form>
-    <div id="successMessage" style="display:none; color: #4CAF50; text-align: center; margin-top: 20px; font-size: 18px;">
-        ✓ Quotation submitted successfully! PDF sent to delmedah@gmail.com
+    <div id="successMessage" style="display:none; padding: 30px; text-align: center; margin-top: 20px;">
+        <h2 style="color: #4CAF50; margin-bottom: 20px;">✓ Quotation PDF Generated Successfully!</h2>
+        <p style="color: aliceblue; font-size: 16px; margin-bottom: 30px;">Your PDF has been downloaded. Now send it to us using:</p>
+        <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+            <button id="gmailBtn" class="sendBtn" style="background-color: #EA4335; padding: 15px 30px; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; display: flex; align-items: center; gap: 10px;">
+                📧 Send via Gmail
+            </button>
+            <button id="whatsappBtn" class="sendBtn" style="background-color: #25D366; padding: 15px 30px; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; display: flex; align-items: center; gap: 10px;">
+                💬 Send via WhatsApp
+            </button>
+        </div>
+        <button id="resetBtn" style="background-color: #666; padding: 10px 20px; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; margin-top: 20px;">
+            ← Back to Form
+        </button>
     </div>
     </main>
     <!--FOOTER-->
@@ -300,11 +312,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <script>
+    let currentFormData = {}; // Store form data globally
+    
     document.getElementById('quotationForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
         // Get form data
-        const formData = {
+        currentFormData = {
             name: document.getElementById('name').value,
             email: document.getElementById('email').value,
             phone: document.getElementById('phone').value,
@@ -332,95 +346,37 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             const lineHeight = 7;
             
             // Add form data to PDF
-            doc.text(`Full Name: ${formData.name}`, 20, yPosition); yPosition += lineHeight;
-            doc.text(`Email: ${formData.email}`, 20, yPosition); yPosition += lineHeight;
-            doc.text(`Phone: ${formData.phone}`, 20, yPosition); yPosition += lineHeight;
-            doc.text(`Granite Type: ${formData.graniteType}`, 20, yPosition); yPosition += lineHeight;
+            doc.text(`Full Name: ${currentFormData.name}`, 20, yPosition); yPosition += lineHeight;
+            doc.text(`Email: ${currentFormData.email}`, 20, yPosition); yPosition += lineHeight;
+            doc.text(`Phone: ${currentFormData.phone}`, 20, yPosition); yPosition += lineHeight;
+            doc.text(`Granite Type: ${currentFormData.graniteType}`, 20, yPosition); yPosition += lineHeight;
             
-            if (formData.otherType) {
-                doc.text(`Other Type: ${formData.otherType}`, 20, yPosition); yPosition += lineHeight;
+            if (currentFormData.otherType) {
+                doc.text(`Other Type: ${currentFormData.otherType}`, 20, yPosition); yPosition += lineHeight;
             }
             
-            doc.text(`Dimensions: ${formData.dimensions}`, 20, yPosition); yPosition += lineHeight;
-            doc.text(`Quantity: ${formData.quantity}`, 20, yPosition); yPosition += lineHeight;
-            doc.text(`Finish: ${formData.finish}`, 20, yPosition); yPosition += lineHeight;
-            doc.text(`Edge Profile: ${formData.edgeProfile}`, 20, yPosition); yPosition += lineHeight;
+            doc.text(`Dimensions: ${currentFormData.dimensions}`, 20, yPosition); yPosition += lineHeight;
+            doc.text(`Quantity: ${currentFormData.quantity}`, 20, yPosition); yPosition += lineHeight;
+            doc.text(`Finish: ${currentFormData.finish}`, 20, yPosition); yPosition += lineHeight;
+            doc.text(`Edge Profile: ${currentFormData.edgeProfile}`, 20, yPosition); yPosition += lineHeight;
             
-            if (formData.additionalInfo) {
-                doc.text(`Additional Info: ${formData.additionalInfo}`, 20, yPosition); yPosition += lineHeight;
+            if (currentFormData.additionalInfo) {
+                doc.text(`Additional Info: ${currentFormData.additionalInfo}`, 20, yPosition); yPosition += lineHeight;
             }
             
-            doc.text(`Submitted: ${formData.submittedDate}`, 20, yPosition); yPosition += lineHeight;
+            doc.text(`Submitted: ${currentFormData.submittedDate}`, 20, yPosition); yPosition += lineHeight;
             
             // Save PDF
-            doc.save(`quotation_${formData.name.replace(/\s+/g, '_')}_${Date.now()}.pdf`);
+            doc.save(`quotation_${currentFormData.name.replace(/\s+/g, '_')}_${Date.now()}.pdf`);
             
-            // Send data to email
-            sendQuotationEmail(formData);
+            // Show success message with send options
+            showSuccessMessage();
             
         } catch (error) {
             console.error('Error generating PDF:', error);
             alert('Error processing form. Please check the console.');
         }
     });
-
-    function sendQuotationEmail(formData) {
-        // Send form data to backend service
-        // This requires a backend API endpoint or third-party service
-        
-        // Option 1: Send via your own backend (uncomment and update URL)
-        /*
-        fetch('https://your-backend-api.com/send-quotation', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                ...formData,
-                recipientEmail: 'delmedah@gmail.com'
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('successMessage').style.display = 'block';
-            document.getElementById('quotationForm').reset();
-        })
-        .catch(error => {
-            console.error('Error sending email:', error);
-            showSuccessMessage(); // Show success even if email fails
-        });
-        */
-        
-        // Option 2: Send via FormSubmit.co (free service)
-        sendViaFormSubmit(formData);
-    }
-
-    function sendViaFormSubmit(formData) {
-        const form = new FormData();
-        form.append('email', formData.email);
-        form.append('name', formData.name);
-        form.append('phone', formData.phone);
-        form.append('granite_type', formData.graniteType);
-        form.append('dimensions', formData.dimensions);
-        form.append('quantity', formData.quantity);
-        form.append('finish', formData.finish);
-        form.append('edge_profile', formData.edgeProfile);
-        form.append('additional_info', formData.additionalInfo);
-        form.append('_captcha', 'false');
-        form.append('_next', window.location.href);
-
-        fetch('https://formsubmit.co/delmedah@gmail.com', {
-            method: 'POST',
-            body: form
-        })
-        .then(response => {
-            showSuccessMessage();
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showSuccessMessage(); // Show success message even if request fails
-        });
-    }
 
     function showSuccessMessage() {
         const form = document.getElementById('quotationForm');
@@ -434,13 +390,105 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         
         // Scroll to success message
         successMsg.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Gmail button functionality
+    document.getElementById('gmailBtn').addEventListener('click', function() {
+        const gmailLink = generateGmailLink();
+        window.open(gmailLink, '_blank');
+    });
+
+    // WhatsApp button functionality
+    document.getElementById('whatsappBtn').addEventListener('click', function() {
+        const whatsappLink = generateWhatsAppLink();
+        window.open(whatsappLink, '_blank');
+    });
+
+    // Reset button functionality
+    document.getElementById('resetBtn').addEventListener('click', function() {
+        const form = document.getElementById('quotationForm');
+        const successMsg = document.getElementById('successMessage');
         
-        // Reset form after 3 seconds (for potential page reload)
-        setTimeout(() => {
-            form.style.display = 'block';
-            successMsg.style.display = 'none';
-            form.reset();
-        }, 5000);
+        // Show form
+        form.style.display = 'grid';
+        
+        // Hide success message
+        successMsg.style.display = 'none';
+        
+        // Reset form
+        form.reset();
+        
+        // Scroll to form
+        form.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    function generateGmailLink() {
+        const subject = `Granite Stone Quotation Request - ${currentFormData.name}`;
+        const body = createEmailBody();
+        
+        // Gmail link format
+        const gmailLink = `https://mail.google.com/mail/?view=cm&fs=1&to=delmedah@gmail.com&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        return gmailLink;
+    }
+
+    function generateWhatsAppLink() {
+        const phoneNumber = '256'; // Uganda country code, add the full number if needed
+        const message = createWhatsAppMessage();
+        
+        // WhatsApp link format
+        const whatsappLink = `https://wa.me/?text=${encodeURIComponent(message)}`;
+        return whatsappLink;
+    }
+
+    function createEmailBody() {
+        let body = `Hello,\n\n`;
+        body += `I am submitting a granite stone quotation request with the following details:\n\n`;
+        body += `Name: ${currentFormData.name}\n`;
+        body += `Email: ${currentFormData.email}\n`;
+        body += `Phone: ${currentFormData.phone}\n`;
+        body += `Granite Type: ${currentFormData.graniteType}\n`;
+        
+        if (currentFormData.otherType) {
+            body += `Other Type: ${currentFormData.otherType}\n`;
+        }
+        
+        body += `Dimensions: ${currentFormData.dimensions}\n`;
+        body += `Quantity: ${currentFormData.quantity}\n`;
+        body += `Finish: ${currentFormData.finish}\n`;
+        body += `Edge Profile: ${currentFormData.edgeProfile}\n`;
+        
+        if (currentFormData.additionalInfo) {
+            body += `Additional Information: ${currentFormData.additionalInfo}\n`;
+        }
+        
+        body += `\nSubmission Date: ${currentFormData.submittedDate}\n`;
+        body += `\nPlease find the detailed quotation PDF attached.\n\n`;
+        body += `Thank you,\n${currentFormData.name}`;
+        
+        return body;
+    }
+
+    function createWhatsAppMessage() {
+        let message = `Hello! I am submitting a granite stone quotation request:\n\n`;
+        message += `📋 *Customer Details*\n`;
+        message += `Name: ${currentFormData.name}\n`;
+        message += `Email: ${currentFormData.email}\n`;
+        message += `Phone: ${currentFormData.phone}\n\n`;
+        
+        message += `🪨 *Stone Requirements*\n`;
+        message += `Granite Type: ${currentFormData.graniteType}\n`;
+        message += `Dimensions: ${currentFormData.dimensions}\n`;
+        message += `Quantity: ${currentFormData.quantity}\n`;
+        message += `Finish: ${currentFormData.finish}\n`;
+        message += `Edge Profile: ${currentFormData.edgeProfile}\n`;
+        
+        if (currentFormData.additionalInfo) {
+            message += `\nAdditional Info: ${currentFormData.additionalInfo}\n`;
+        }
+        
+        message += `\nPlease download the PDF quotation form from: ${window.location.href}`;
+        
+        return message;
     }
     </script>
 </body>
