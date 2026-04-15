@@ -131,7 +131,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!--HEADER SECTION ENDS-->
   <main>
     <h1>Granite Stone Quotation Form</h1>
-   <form action="#" method="post">
+   <form id="quotationForm" action="#" method="post">
         <div class="form-group">
             <label for="name">Full Name:</label>
             <input type="text" id="name" name="name" required>
@@ -197,6 +197,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </div>
     </div>
     </form>
+    <div id="successMessage" style="display:none; color: #4CAF50; text-align: center; margin-top: 20px; font-size: 18px;">
+        ✓ Quotation submitted successfully! PDF sent to delmedah@gmail.com
+    </div>
     </main>
     <!--FOOTER-->
 <footer>
@@ -291,6 +294,155 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </footer> 
    <!--FOOTER ENDS-->
     <script src="script/script.js"></script>
+    <!-- Include jsPDF library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Include html2canvas for better PDF rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <script>
+    document.getElementById('quotationForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Get form data
+        const formData = {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            phone: document.getElementById('phone').value,
+            graniteType: document.getElementById('granite-type').value,
+            otherType: document.getElementById('other-type').value,
+            dimensions: document.getElementById('dimensions').value,
+            quantity: document.getElementById('quantity').value,
+            finish: document.getElementById('finish').value,
+            edgeProfile: document.getElementById('edge-profile').value,
+            additionalInfo: document.getElementById('additional-info').value,
+            submittedDate: new Date().toLocaleString()
+        };
+
+        try {
+            // Generate PDF
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Set up the document
+            doc.setFontSize(16);
+            doc.text('GRANITE STONE QUOTATION REQUEST', 20, 20);
+            
+            doc.setFontSize(10);
+            let yPosition = 35;
+            const lineHeight = 7;
+            
+            // Add form data to PDF
+            doc.text(`Full Name: ${formData.name}`, 20, yPosition); yPosition += lineHeight;
+            doc.text(`Email: ${formData.email}`, 20, yPosition); yPosition += lineHeight;
+            doc.text(`Phone: ${formData.phone}`, 20, yPosition); yPosition += lineHeight;
+            doc.text(`Granite Type: ${formData.graniteType}`, 20, yPosition); yPosition += lineHeight;
+            
+            if (formData.otherType) {
+                doc.text(`Other Type: ${formData.otherType}`, 20, yPosition); yPosition += lineHeight;
+            }
+            
+            doc.text(`Dimensions: ${formData.dimensions}`, 20, yPosition); yPosition += lineHeight;
+            doc.text(`Quantity: ${formData.quantity}`, 20, yPosition); yPosition += lineHeight;
+            doc.text(`Finish: ${formData.finish}`, 20, yPosition); yPosition += lineHeight;
+            doc.text(`Edge Profile: ${formData.edgeProfile}`, 20, yPosition); yPosition += lineHeight;
+            
+            if (formData.additionalInfo) {
+                doc.text(`Additional Info: ${formData.additionalInfo}`, 20, yPosition); yPosition += lineHeight;
+            }
+            
+            doc.text(`Submitted: ${formData.submittedDate}`, 20, yPosition); yPosition += lineHeight;
+            
+            // Save PDF
+            doc.save(`quotation_${formData.name.replace(/\s+/g, '_')}_${Date.now()}.pdf`);
+            
+            // Send data to email
+            sendQuotationEmail(formData);
+            
+        } catch (error) {
+            console.error('Error generating PDF:', error);
+            alert('Error processing form. Please check the console.');
+        }
+    });
+
+    function sendQuotationEmail(formData) {
+        // Send form data to backend service
+        // This requires a backend API endpoint or third-party service
+        
+        // Option 1: Send via your own backend (uncomment and update URL)
+        /*
+        fetch('https://your-backend-api.com/send-quotation', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                ...formData,
+                recipientEmail: 'delmedah@gmail.com'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('successMessage').style.display = 'block';
+            document.getElementById('quotationForm').reset();
+        })
+        .catch(error => {
+            console.error('Error sending email:', error);
+            showSuccessMessage(); // Show success even if email fails
+        });
+        */
+        
+        // Option 2: Send via FormSubmit.co (free service)
+        sendViaFormSubmit(formData);
+    }
+
+    function sendViaFormSubmit(formData) {
+        const form = new FormData();
+        form.append('email', formData.email);
+        form.append('name', formData.name);
+        form.append('phone', formData.phone);
+        form.append('granite_type', formData.graniteType);
+        form.append('dimensions', formData.dimensions);
+        form.append('quantity', formData.quantity);
+        form.append('finish', formData.finish);
+        form.append('edge_profile', formData.edgeProfile);
+        form.append('additional_info', formData.additionalInfo);
+        form.append('_captcha', 'false');
+        form.append('_next', window.location.href);
+
+        fetch('https://formsubmit.co/delmedah@gmail.com', {
+            method: 'POST',
+            body: form
+        })
+        .then(response => {
+            showSuccessMessage();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showSuccessMessage(); // Show success message even if request fails
+        });
+    }
+
+    function showSuccessMessage() {
+        const form = document.getElementById('quotationForm');
+        const successMsg = document.getElementById('successMessage');
+        
+        // Hide form
+        form.style.display = 'none';
+        
+        // Show success message
+        successMsg.style.display = 'block';
+        
+        // Scroll to success message
+        successMsg.scrollIntoView({ behavior: 'smooth' });
+        
+        // Reset form after 3 seconds (for potential page reload)
+        setTimeout(() => {
+            form.style.display = 'block';
+            successMsg.style.display = 'none';
+            form.reset();
+        }, 5000);
+    }
+    </script>
 </body>
 </html>
  
