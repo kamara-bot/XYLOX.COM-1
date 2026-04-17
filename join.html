@@ -131,32 +131,69 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!--HEADER SECTION ENDS-->
          <main>
             <div class="wrapper2">
-                <form action="">
+                <form id="registerForm">
                     <h1>Create Account</h1>
-                    your name
+                    <div id="registerMessage" class="form-message"></div>
+                    <label>Your name</label>
                     <div class="input-box">
-                        <input type="text" placeholder="first and last name" required>
+                        <input id="registerName" type="text" placeholder="First and last name" required>
                     </div>
-                    Mobile number or email
+                    <label>Mobile number or email</label>
                     <div class="input-box">
-                        <input type="text" placeholder="Username" required>
+                        <input id="registerUsername" type="text" placeholder="Username or email" required>
                     </div>
-                    Password
+                    <label>Password</label>
                     <div class="input-box">
-                        <input type="password" placeholder="password" required>
+                        <input id="registerPassword" type="password" placeholder="Password" required>
                     </div>
-                    re-enter password
+                    <label>Re-enter password</label>
                     <div class="input-box">
-                        <input type="password" placeholder="password" required>
+                        <input id="registerPasswordRepeat" type="password" placeholder="Repeat password" required>
                     </div>
-                    <button type="submit" class="btn">create acccount</button>
+                    <button type="submit" class="btn">Create account</button>
 
-                    By creating an account, you agree to Xylox.com's<a href="#"> Conditions</a> of Use and <a href="#"> Notice.</a>
+                    By creating an account, you agree to Xylox.com's <a href="#">Conditions</a> of Use and <a href="#">Notice</a>.
                     <div class="register-link">
                         <p>Already have an account? <a href="login.html">Login</a></p>
                     </div>
                 </form>
             </div>
+            <script>
+                const registerForm = document.getElementById('registerForm');
+                const registerMessage = document.getElementById('registerMessage');
+
+                registerForm.addEventListener('submit', async function (event) {
+                    event.preventDefault();
+                    const name = document.getElementById('registerName').value.trim();
+                    const username = document.getElementById('registerUsername').value.trim();
+                    const password = document.getElementById('registerPassword').value;
+                    const passwordRepeat = document.getElementById('registerPasswordRepeat').value;
+
+                    if (password !== passwordRepeat) {
+                        registerMessage.textContent = 'Passwords do not match.';
+                        registerMessage.style.color = '#ff8a80';
+                        return;
+                    }
+
+                    const response = await fetch('/api/register', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name, username, password })
+                    });
+                    const data = await response.json();
+                    if (!response.ok) {
+                        registerMessage.textContent = data.error || 'Registration failed.';
+                        registerMessage.style.color = '#ff8a80';
+                        return;
+                    }
+
+                    registerMessage.textContent = data.message;
+                    registerMessage.style.color = '#82ff9e';
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 1800);
+                });
+            </script>
 
 
 

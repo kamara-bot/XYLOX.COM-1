@@ -131,25 +131,56 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!--HEADER SECTION ENDS-->
          <main>
             <div class="wrapper">
-                <form action="">
+                <form id="loginForm">
                     <h1>Login</h1>
+                    <div id="loginMessage" class="form-message"></div>
                     <div class="input-box">
-                        <input type="text" placeholder="Username" required> <box-icon name='user-circle'></box-icon>
+                        <input id="loginUsername" type="text" placeholder="Username" required> <box-icon name='user-circle'></box-icon>
                     </div>
                     <div class="input-box">
-                        <input type="password" placeholder="password" required> <box-icon name='lock-alt' type='solid' ></box-icon>
+                        <input id="loginPassword" type="password" placeholder="Password" required> <box-icon name='lock-alt' type='solid' ></box-icon>
                     </div>
                     <div class="remember-forgot">
                         <label><input type="checkbox"> Remember me</label>
                     </div>
 
                     <button type="submit" class="btn">Login</button><br>
-                    <a href="#">forgot  password</a>
+                    <a href="#">Forgot password</a>
                     <div class="register-link">
-                        <p> Don't have an account? <a href="join.html">Resigister</a></a></p>
+                        <p>Don't have an account? <a href="join.html">Register</a></p>
                     </div>
                 </form>
             </div>
+            <script>
+                const loginForm = document.getElementById('loginForm');
+                const loginMessage = document.getElementById('loginMessage');
+
+                loginForm.addEventListener('submit', async function (event) {
+                    event.preventDefault();
+                    const username = document.getElementById('loginUsername').value.trim();
+                    const password = document.getElementById('loginPassword').value;
+
+                    const response = await fetch('/api/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, password })
+                    });
+                    const data = await response.json();
+                    if (!response.ok) {
+                        loginMessage.textContent = data.error || 'Login failed.';
+                        loginMessage.style.color = '#ff8a80';
+                        return;
+                    }
+
+                    const user = data.user;
+                    localStorage.setItem('xyloxUser', JSON.stringify(user));
+                    if (user.role === 'admin') {
+                        window.location.href = 'admin.html';
+                        return;
+                    }
+                    window.location.href = 'account.html';
+                });
+            </script>
 
 
 

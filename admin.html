@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | XYLOX.COM</title>
+    <link rel="icon" type="image/x-icon" href="img/xx.jpg">
+    <link rel="stylesheet" href="styles/general.css">
+    <link rel="stylesheet" href="styles/header.css">
+    <link rel="stylesheet" href="styles/footer.css">
+    <link rel="stylesheet" href="styles/admin.css">
+</head>
+<body>
+<nav class="header">
+    <div class="left"><a href="index.html"><img class="ut1" src="img/xx.jpg" alt="Logo"></a></div>
+    <button class="mobile-toggle" aria-label="Menu"><div class="hamburger"><span class="bar"></span><span class="bar"></span><span class="bar"></span></div></button>
+    <div class="middle"></div>
+    <div class="nav">
+        <ul class="menu-list">
+            <li class="menu-item"><a href="About.html" class="nav-link">About</a></li>
+        </ul>
+    </div>
+    <div class="right">
+        <button id="logoutButton" class="btn loginbtn">Logout</button>
+    </div>
+</nav>
+<main class="admin-page">
+    <section class="admin-hero">
+        <div>
+            <h1>Admin Dashboard</h1>
+            <p>Approve new user accounts and deposit requests for customers.</p>
+            <p><strong>Default admin login:</strong> admin@xylox.com / Admin123</p>
+        </div>
+    </section>
+    <section class="admin-grids">
+        <div class="card">
+            <h2>Pending user approvals</h2>
+            <div id="pendingUsers"></div>
+        </div>
+        <div class="card">
+            <h2>Pending deposit approvals</h2>
+            <div id="pendingDeposits"></div>
+        </div>
+    </section>
+</main>
+<footer>
+    <div class="closing">
+        <div class="closing_info">
+            <div class="About_xyloxcom">
+                <section>
+                    <span>About us</span>
+                    <ol>
+                        <a href="About.html"><li>About Xylox</li></a>
+                        <a href="join.html"><li>Opotunities</li></a>
+                        <a href="https://xylox.blogspot.com/2023/08/blog-post.html"><li>Blogs</li></a>
+                    </ol>
+                </section>
+            </div>
+        </div>
+        <div class="closing_info">
+            <div class="About_xyloxcom">
+                <section>
+                    <span>Services provided</span>
+                    <ol>
+                        <a href="account.html"><li>Your account</li></a>
+                        <a href="#"><li>services requested</li></a>
+                        <a href="#"><li>Your Location</li></a>
+                        <a href="#"><li>Your savings</li></a>
+                    </ol>
+                </section>
+            </div>
+        </div>
+        <div class="closing_info">
+            <div class="About_xyloxcom">
+                <section>
+                    <span>Dream with us</span>
+                    <ol>
+                        <a href="#"><li>Plan to start up</li></a>
+                        <a href="#"><li>become a member</li></a>
+                        <a href="#"><li>let us help you</li></a>
+                    </ol>
+                </section>
+            </div>
+        </div>
+    </div>
+    <div class="down_part">
+        <div class="social_media_apps">
+            <div class="apps">
+                <ul>
+                    <li><img class="icon" src="img/icons/facebook_icon.png"></li>
+                    <li><a href="https://twitter.com/xylox_isaiah"><img class="icon" src="img/icons/twitter_icon (1).png"></a></li>
+                    <li><img class="icon" src="img/icons/email_icon (2).png"></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copamy_infomation"><img class="footer_company_logo" src="img/xx.jpg"> Ever ready for services</div>
+    </div>
+    <div class="copy_rights">
+        <p>&copy; <script>document.write(new Date().getFullYear());</script>,XYLOX.COM All rights reserved.</p>
+    </div>
+</footer>
+<script>
+const storedUser = JSON.parse(localStorage.getItem('xyloxUser'));
+if (!storedUser || storedUser.role !== 'admin') {
+    window.location.href = 'login.html';
+}
+
+const headers = { 'Content-Type': 'application/json', 'x-user-role': 'admin' };
+const pendingUsersContainer = document.getElementById('pendingUsers');
+const pendingDepositsContainer = document.getElementById('pendingDeposits');
+const logoutButton = document.getElementById('logoutButton');
+
+logoutButton.addEventListener('click', () => {
+    localStorage.removeItem('xyloxUser');
+    window.location.href = 'login.html';
+});
+
+function formatDate(value) {
+    return new Date(value).toLocaleString();
+}
+
+async function loadPendingUsers() {
+    const response = await fetch('/api/admin/pending-users', { headers });
+    const data = await response.json();
+    pendingUsersContainer.innerHTML = data.users.length === 0
+        ? '<p>No pending users.</p>'
+        : data.users.map(user => `
+            <div class="list-item">
+                <div>
+                    <strong>${user.name}</strong><br>
+                    <small>${user.username}</small>
+                </div>
+                <button onclick="approveUser('${user._id}')">Approve</button>
+            </div>
+        `).join('');
+}
+
+async function loadPendingDeposits() {
+    const response = await fetch('/api/admin/pending-deposits', { headers });
+    const data = await response.json();
+    pendingDepositsContainer.innerHTML = data.deposits.length === 0
+        ? '<p>No pending deposit requests.</p>'
+        : data.deposits.map(item => `
+            <div class="list-item">
+                <div>
+                    <strong>${item.user.name}</strong> (${item.user.username})<br>
+                    <span>${new Intl.NumberFormat('en-UG', { style: 'currency', currency: 'UGX', maximumFractionDigits: 0 }).format(item.amount)}</span><br>
+                    <small>${formatDate(item.createdAt)}</small>
+                </div>
+                <button onclick="approveDeposit('${item._id}')">Approve</button>
+            </div>
+        `).join('');
+}
+
+window.approveUser = async function (id) {
+    await fetch(`/api/admin/users/${id}/approve`, { method: 'POST', headers });
+    loadPendingUsers();
+};
+
+window.approveDeposit = async function (id) {
+    await fetch(`/api/admin/deposits/${id}/approve`, { method: 'POST', headers });
+    loadPendingDeposits();
+};
+
+loadPendingUsers();
+loadPendingDeposits();
+</script>
+</body>
+</html>

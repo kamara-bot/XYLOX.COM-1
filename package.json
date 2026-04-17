@@ -1,0 +1,13 @@
+{
+  "name": "xylox-backend",
+  "version": "1.0.0",
+  "description": "XYLOX.COM backend for registration, login, and admin approvals",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongodb": "^5.8.0"
+  }
+}

@@ -1,0 +1,62 @@
+.admin-page {
+    max-width: 1100px;
+    margin: 80px auto 40px;
+    padding: 0 20px;
+}
+.admin-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    margin-bottom: 40px;
+}
+.admin-hero h1 {
+    font-size: 2.8rem;
+    margin-bottom: 10px;
+}
+.admin-hero p {
+    margin-bottom: 12px;
+    color: #e5e5e5;
+}
+.admin-grids {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+.card {
+    background: #151515;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.15);
+}
+.card h2 {
+    margin-bottom: 18px;
+    color: #fff;
+}
+.list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    background: #1f1f1f;
+    padding: 18px;
+    border-radius: 14px;
+    margin-bottom: 16px;
+}
+.list-item button {
+    background: #27ae60;
+    border: none;
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+}
+.list-item button:hover {
+    background: #1f8f4a;
+}
+@media screen and (max-width: 900px) {
+    .admin-grids {
+        grid-template-columns: 1fr;
+    }
+}
