@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Account | XYLOX.COM</title>
+    <link rel="icon" type="image/x-icon" href="img/xx.jpg">
+    <link rel="stylesheet" href="styles/general.css">
+    <link rel="stylesheet" href="styles/header.css">
+    <link rel="stylesheet" href="styles/footer.css">
+    <link rel="stylesheet" href="styles/account.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+<nav class="header">
+    <div class="left">
+        <a href="index.html"><img class="ut1" src="img/xx.jpg" alt="Logo"></a>
+    </div>
+    <button class="mobile-toggle" aria-label="Menu">
+        <div class="hamburger">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+    </button>
+    <div class="middle">
+        <div class="search-container">
+            <input class="search-bar" type="text" placeholder="Search">
+            <button class="button1">
+                <img class="ut3" src="img/icons/ut3.svg" alt="Search">
+                <div class="tooltip">search</div>
+            </button>
+        </div>
+    </div>
+    <div class="nav">
+        <ul class="menu-list">
+            <li class="menu-item">
+                <button class="dropdown-toggle">Art work</button>
+                <ul class="dropdown-menu">
+                    <li><a href="Movie_posters.html">Movie posters</a></li>
+                    <li><a href="Graphics.html">Graphics</a></li>
+                    <li><a href="Movies.html">Movies</a></li>
+                </ul>
+            </li>
+            <li class="menu-item">
+                <button class="dropdown-toggle">Recharge</button>
+                <ul class="dropdown-menu">
+                    <li><a href="recharge-and-stc-data_internet-packages.html">Airtime</a></li>
+                    <li><a href="SIMOSELLER.html" target="_blank">SIMO Services</a></li>
+                </ul>
+            </li>
+            <li class="menu-item">
+                <button class="dropdown-toggle">Services</button>
+                <ul class="dropdown-menu">
+                    <li><a href="plumbling.html">Plumbing</a></li>
+                    <li><a href="architectural.html">Architectural</a></li>
+                    <li><a href="Granite_marble_terrazzo.html">Terrazzo</a></li>
+                    <li><a href="https://septictankempting.com/" target="_blank">Toilet emptying</a></li>
+                </ul>
+            </li>
+            <li class="menu-item">
+                <a href="About.html" class="nav-link">About</a>
+                <div class="auth-buttons">
+                    <a href="join.html" class="btn joinbtn">Join</a>
+                    <a href="login.html" class="btn loginbtn">Login</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="right">
+        <a href="join.html" class="btn joinbtn">Join</a>
+        <a href="login.html" class="btn loginbtn">Login</a>
+    </div>
+</nav>
+<main class="account-page">
+    <section class="hero-block">
+        <div class="hero-copy">
+            <h1>Your Account</h1>
+            <p>Deposit on <strong>0776944322</strong> and send a notification to <strong>delmedah@gmail.com</strong> for approval.</p>
+            <p>Once approved, your balance will reflect in the account summary below.</p>
+        </div>
+        <div class="hero-card">
+            <div class="balance-card">
+                <span>Your balance</span>
+                <strong id="accountBalance">UGX 0</strong>
+            </div>
+            <div class="status-card">
+                <span>Status</span>
+                <strong id="approvalStatus">No deposit requests yet</strong>
+            </div>
+        </div>
+    </section>
+    <section class="account-form-section">
+        <div class="account-form-card">
+            <h2>Deposit Request</h2>
+            <form id="depositForm">
+                <label for="fullName">Account name</label>
+                <input type="text" id="fullName" name="fullName" placeholder="Your name" required>
+
+                <label for="email">Email address</label>
+                <input type="email" id="email" name="email" placeholder="you@example.com" required>
+
+                <label for="phone">Mobile number</label>
+                <input type="tel" id="phone" name="phone" value="0776944322" readonly>
+
+                <label for="amount">Deposit amount (UGX)</label>
+                <input type="number" id="amount" name="amount" min="100" placeholder="1000" required>
+
+                <button type="submit" class="btn submit-btn">Send deposit notification</button>
+            </form>
+            <div id="notification" class="notification"></div>
+        </div>
+        <div class="pending-card">
+            <h3>Pending deposit requests</h3>
+            <ul id="pendingList">
+                <li>No pending deposits yet.</li>
+            </ul>
+            <p class="note">When you submit a deposit request, your browser will prepare an email to <strong>delmedah@gmail.com</strong>. Send that email to request approval and see your balance reflected here.</p>
+        </div>
+    </section>
+</main>
+<footer>
+    <div class="closing">
+        <div class="closing_info">
+           <div class="About_xyloxcom">
+               <section>
+                   <span>
+                    About us
+                   </span>
+                   <ol>
+                      <a href="About.html"><li>
+                           About Xylox
+                       </li></a>
+                       <a href="join.html"><li>
+                          Opotunities
+                       </li></a>
+                       <a href="https://xylox.blogspot.com/2023/08/blog-post.html"> <li>
+                           Blogs
+                       </li></a>
+                   </ol>
+               </section>
+           </div>
+           </div>
+           <div class="closing_info">
+           <div class="About_xyloxcom">
+               <section>
+                   <span>
+                       Services provided
+                   </span>
+                   <ol>
+                      <a href="account.html"><li>
+                           Your account
+                       </li></a>
+                       <a href="#"> <li>
+                          services requested
+                       </li></a>
+                       <a href="#"> <li>
+                          Your Location
+                       </li></a>
+                       <a href="#"><li>
+                           Your savings
+                        </li></a>
+                   </ol>
+               </section>
+           </div>
+           </div>
+           <div class="closing_info">
+           <div class="About_xyloxcom">
+               <section>
+                   <span>
+                    Dream with us
+                   </span>
+                   <ol>
+                    <a href="#">  <li>
+                           Plan to start up
+                       </li></a>
+                       <a href="#"><li>
+                          become a member
+                       </li></a>
+                       <a href="#"><li>
+                          let us help you
+                        </li></a>
+                   </ol>
+               </section>
+               </div>
+           </div>
+        </div>
+    </div>
+    <div class="down_part">
+        <div class="social_media_apps">
+            <div class="apps">
+        <ul>
+            <li><img class="icon" src="img/icons/facebook_icon.png" ></li>
+            <li><a href="https://twitter.com/xylox_isaiah"><img class="icon" src="img/icons/twitter_icon (1).png" ></a></li>
+            <li><img class="icon" src="img/icons/email_icon (2).png" ></li>
+        </ul>
+        </div>
+        <div class="copamy_infomation">
+            <img class="footer_company_logo"src="img/xx.jpg"> Ever ready for services
+        </div>
+    </div>
+    <div class="copy_rights">
+    <p>&copy;
+     <script>
+        document.write(new Date().getFullYear());
+     </script>
+    ,XYLOX.COM All rights reserved.
+    </p>
+    </div>
+    </div>
+</footer>
+<script>
+const STORAGE_KEY = 'xyloxAccountData';
+const adminEmail = 'delmedah@gmail.com';
+const accountBalanceEl = document.getElementById('accountBalance');
+const approvalStatusEl = document.getElementById('approvalStatus');
+const pendingList = document.getElementById('pendingList');
+const notificationEl = document.getElementById('notification');
+const form = document.getElementById('depositForm');
+
+let accountData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
+    balance: 0,
+    pending: []
+};
+
+function formatCurrency(value) {
+    return new Intl.NumberFormat('en-UG', { style: 'currency', currency: 'UGX', maximumFractionDigits: 0 }).format(value);
+}
+
+function renderAccount() {
+    accountBalanceEl.textContent = formatCurrency(accountData.balance);
+    approvalStatusEl.textContent = accountData.pending.length > 0 ? 'Waiting for approval' : 'No deposit requests yet';
+    pendingList.innerHTML = accountData.pending.length === 0
+        ? '<li>No pending deposits yet.</li>'
+        : accountData.pending.map(item => `
+            <li>
+                <div class="pending-item-header">
+                    <strong>${item.amountLabel}</strong>
+                    <button class="approve-btn" onclick="approveDeposit(${item.id})">Approve</button>
+                </div>
+                <div class="pending-item-details">by ${item.name} • <small>${item.date}</small></div>
+
+form.addEventListener('submit', function (event) {
+    event.preventDefault();
+    const name = document.getElementById('fullName').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const amount = Number(document.getElementById('amount').value);
+
+    if (!name || !email || !amount || amount <= 0) {
+        notificationEl.textContent = 'Please fill in all fields with a valid amount.';
+        return;
+    }
+
+    const depositRequest = {
+        id: Date.now(),
+        name,
+        email,
+        phone,
+        amount,
+        amountLabel: formatCurrency(amount),
+        date: new Date().toLocaleString()
+    };
+
+    accountData.pending.unshift(depositRequest);
+    saveAccountData();
+    renderAccount();
+
+    const subject = encodeURIComponent('Deposit notification for XYLOX account');
+    const body = encodeURIComponent(
+        `Hello,%0D%0A%0D%0AI have deposited ${formatCurrency(amount)} to ${phone}.%0D%0APlease approve this deposit and reflect it on my account balance.%0D%0A%0D%0AName: ${name}%0D%0AEmail: ${email}%0D%0AAmount: ${formatCurrency(amount)}%0D%0APhone: ${phone}%0D%0A%0D%0AThank you.`
+    );
+
+    const mailto = `mailto:${adminEmail}?subject=${subject}&body=${body}`;
+    notificationEl.innerHTML = `A deposit notification has been prepared for <strong>${adminEmail}</strong>. Please send the email to request approval.`;
+    window.location.href = mailto;
+});
+
+function approveDeposit(id) {
+    const depositIndex = accountData.pending.findIndex(item => item.id === id);
+    if (depositIndex === -1) {
+        return;
+    }
+    const [approvedDeposit] = accountData.pending.splice(depositIndex, 1);
+    accountData.balance += approvedDeposit.amount;
+    saveAccountData();
+    renderAccount();
+    notificationEl.innerHTML = `Deposit <strong>${approvedDeposit.amountLabel}</strong> has been approved and added to your balance.`;
+}
+
+renderAccount();
+</script>
+</body>
+</html>
