@@ -130,11 +130,6 @@
     </div>
 </footer>
 <script>
-const storedUser = JSON.parse(localStorage.getItem('xyloxUser'));
-if (!storedUser) {
-    window.location.href = 'login.html';
-}
-
 const accountBalanceEl = document.getElementById('accountBalance');
 const approvalStatusEl = document.getElementById('approvalStatus');
 const accountNameEl = document.getElementById('accountName');
@@ -146,11 +141,10 @@ const depositForm = document.getElementById('depositForm');
 const depositMessage = document.getElementById('depositMessage');
 const logoutButton = document.getElementById('logoutButton');
 
-const user = storedUser;
 let userAccount = null;
 
-logoutButton.addEventListener('click', () => {
-    localStorage.removeItem('xyloxUser');
+logoutButton.addEventListener('click', async () => {
+    await fetch('/api/logout', { method: 'POST' });
     window.location.href = 'login.html';
 });
 
@@ -178,20 +172,6 @@ function renderAccount() {
     }
 }
 
-async function loadAccount() {
-    const response = await fetch(`/api/account/${user._id}`);
-    const data = await response.json();
-    if (!response.ok) {
-        loginStateMessageEl.textContent = data.error || 'Unable to load account.';
-        loginStateMessageEl.style.color = '#ff8a80';
-        return;
-    }
-    userAccount = data.user;
-    localStorage.setItem('xyloxUser', JSON.stringify(userAccount));
-    renderAccount();
-    renderDeposits(data.deposits);
-}
-
 function renderDeposits(deposits) {
     if (!deposits || deposits.length === 0) {
         pendingList.innerHTML = '<li>No deposit requests yet.</li>';
@@ -203,6 +183,18 @@ function renderDeposits(deposits) {
             <small>${new Date(deposit.createdAt).toLocaleString()}</small>
         </li>
     `).join('');
+}
+
+async function loadAccount() {
+    const response = await fetch('/api/account/me');
+    const data = await response.json();
+    if (!response.ok) {
+        window.location.href = 'login.html';
+        return;
+    }
+    userAccount = data.user;
+    renderAccount();
+    renderDeposits(data.deposits);
 }
 
 depositForm.addEventListener('submit', async function (event) {
@@ -217,7 +209,7 @@ depositForm.addEventListener('submit', async function (event) {
     const response = await fetch('/api/deposits', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user._id, amount })
+        body: JSON.stringify({ amount })
     });
     const data = await response.json();
     if (!response.ok) {
@@ -228,14 +220,7 @@ depositForm.addEventListener('submit', async function (event) {
 
     depositMessage.innerHTML = `Deposit request sent. Prepare email to <strong>delmedah@gmail.com</strong> for approval.`;
     depositMessage.style.color = '#82ff9e';
-    fetch(`/api/account/${user._id}`).then(r => r.json()).then(res => {
-        if (res.user) {
-            userAccount = res.user;
-            localStorage.setItem('xyloxUser', JSON.stringify(userAccount));
-            renderAccount();
-            renderDeposits(res.deposits);
-        }
-    });
+    loadAccount();
     const subject = encodeURIComponent('Deposit notification for XYLOX account');
     const body = encodeURIComponent(`Hello,%0D%0A%0D%0AI have deposited ${formatCurrency(amount)} to 0776944322.%0D%0APlease approve this deposit and reflect it on my account balance.%0D%0A%0D%0AName: ${userAccount.name}%0D%0AUsername: ${userAccount.username}%0D%0AAmount: ${formatCurrency(amount)}%0D%0A%0D%0AThank you.`);
     window.location.href = `mailto:delmedah@gmail.com?subject=${subject}&body=${body}`;

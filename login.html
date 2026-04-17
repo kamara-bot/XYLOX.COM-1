@@ -173,7 +173,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     }
 
                     const user = data.user;
-                    localStorage.setItem('xyloxUser', JSON.stringify(user));
                     if (user.role === 'admin') {
                         window.location.href = 'admin.html';
                         return;

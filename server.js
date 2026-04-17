@@ -1,13 +1,16 @@
 const express = require('express');
 const path = require('path');
 const crypto = require('crypto');
+const cookieParser = require('cookie-parser');
 const { MongoClient, ObjectId } = require('mongodb');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://Xylox_store:Buttuura@cluster0.bayp373.mongodb.net/?appName=cluster0';
+const COOKIE_SECRET = process.env.COOKIE_SECRET || 'xylox-secret';
 
 app.use(express.json());
+app.use(cookieParser(COOKIE_SECRET));
 app.use(express.static(path.resolve(__dirname)));
 
 let db;
@@ -24,9 +27,17 @@ function sanitizeUser(user) {
   return safe;
 }
 
+function getSignedUserCookie(req) {
+  const cookie = req.signedCookies.xyloxUser;
+  if (!cookie || !cookie._id || !cookie.role) {
+    return null;
+  }
+  return cookie;
+}
+
 async function requireAdmin(req, res, next) {
-  const role = req.headers['x-user-role'];
-  if (role !== 'admin') {
+  const userCookie = getSignedUserCookie(req);
+  if (!userCookie || userCookie.role !== 'admin') {
     return res.status(403).json({ error: 'Admin access required' });
   }
   next();
@@ -71,10 +82,52 @@ app.post('/api/login', async (req, res) => {
     return res.status(401).json({ error: 'Invalid credentials.' });
   }
 
+  const sessionPayload = { _id: user._id.toString(), role: user.role };
+  res.cookie('xyloxUser', sessionPayload, {
+    httpOnly: true,
+    sameSite: 'lax',
+    signed: true,
+    maxAge: 7 * 24 * 60 * 60 * 1000
+  });
+
   res.json({
     user: sanitizeUser(user),
     message: user.role === 'admin' ? 'Admin login successful.' : user.approved ? 'Login successful.' : 'Account pending approval.'
   });
+});
+
+app.post('/api/logout', async (req, res) => {
+  res.clearCookie('xyloxUser');
+  res.json({ success: true, message: 'Logged out.' });
+});
+
+app.get('/api/me', async (req, res) => {
+  const userCookie = getSignedUserCookie(req);
+  if (!userCookie) {
+    return res.status(401).json({ error: 'Not authenticated.' });
+  }
+
+  const user = await usersCollection.findOne({ _id: new ObjectId(userCookie._id) });
+  if (!user) {
+    return res.status(404).json({ error: 'User not found.' });
+  }
+
+  res.json({ user: sanitizeUser(user) });
+});
+
+app.get('/api/account/me', async (req, res) => {
+  const userCookie = getSignedUserCookie(req);
+  if (!userCookie) {
+    return res.status(401).json({ error: 'Not authenticated.' });
+  }
+
+  const user = await usersCollection.findOne({ _id: new ObjectId(userCookie._id) });
+  if (!user) {
+    return res.status(404).json({ error: 'User not found.' });
+  }
+
+  const deposits = await depositsCollection.find({ userId: new ObjectId(userCookie._id) }).sort({ createdAt: -1 }).toArray();
+  res.json({ user: sanitizeUser(user), deposits });
 });
 
 app.get('/api/account/:id', async (req, res) => {
@@ -91,22 +144,23 @@ app.get('/api/account/:id', async (req, res) => {
 });
 
 app.post('/api/deposits', async (req, res) => {
-  const { userId, amount } = req.body;
-  if (!userId || !amount || amount <= 0) {
-    return res.status(400).json({ error: 'Valid userId and amount are required.' });
+  const userCookie = getSignedUserCookie(req);
+  if (!userCookie) {
+    return res.status(401).json({ error: 'Not authenticated.' });
   }
 
-  if (!ObjectId.isValid(userId)) {
-    return res.status(400).json({ error: 'Invalid user id.' });
+  const { amount } = req.body;
+  if (!amount || amount <= 0) {
+    return res.status(400).json({ error: 'Valid amount is required.' });
   }
 
-  const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
+  const user = await usersCollection.findOne({ _id: new ObjectId(userCookie._id) });
   if (!user) {
     return res.status(404).json({ error: 'User not found.' });
   }
 
   const request = {
-    userId: new ObjectId(userId),
+    userId: new ObjectId(userCookie._id),
     amount: Number(amount),
     status: 'pending',
     createdAt: new Date()

@@ -101,18 +101,12 @@
     </div>
 </footer>
 <script>
-const storedUser = JSON.parse(localStorage.getItem('xyloxUser'));
-if (!storedUser || storedUser.role !== 'admin') {
-    window.location.href = 'login.html';
-}
-
-const headers = { 'Content-Type': 'application/json', 'x-user-role': 'admin' };
 const pendingUsersContainer = document.getElementById('pendingUsers');
 const pendingDepositsContainer = document.getElementById('pendingDeposits');
 const logoutButton = document.getElementById('logoutButton');
 
-logoutButton.addEventListener('click', () => {
-    localStorage.removeItem('xyloxUser');
+logoutButton.addEventListener('click', async () => {
+    await fetch('/api/logout', { method: 'POST' });
     window.location.href = 'login.html';
 });
 
@@ -120,8 +114,22 @@ function formatDate(value) {
     return new Date(value).toLocaleString();
 }
 
+async function ensureAdmin() {
+    const response = await fetch('/api/me');
+    if (!response.ok) {
+        window.location.href = 'login.html';
+        return false;
+    }
+    const data = await response.json();
+    if (data.user.role !== 'admin') {
+        window.location.href = 'login.html';
+        return false;
+    }
+    return true;
+}
+
 async function loadPendingUsers() {
-    const response = await fetch('/api/admin/pending-users', { headers });
+    const response = await fetch('/api/admin/pending-users');
     const data = await response.json();
     pendingUsersContainer.innerHTML = data.users.length === 0
         ? '<p>No pending users.</p>'
@@ -137,7 +145,7 @@ async function loadPendingUsers() {
 }
 
 async function loadPendingDeposits() {
-    const response = await fetch('/api/admin/pending-deposits', { headers });
+    const response = await fetch('/api/admin/pending-deposits');
     const data = await response.json();
     pendingDepositsContainer.innerHTML = data.deposits.length === 0
         ? '<p>No pending deposit requests.</p>'
@@ -154,17 +162,21 @@ async function loadPendingDeposits() {
 }
 
 window.approveUser = async function (id) {
-    await fetch(`/api/admin/users/${id}/approve`, { method: 'POST', headers });
+    await fetch(`/api/admin/users/${id}/approve`, { method: 'POST' });
     loadPendingUsers();
 };
 
 window.approveDeposit = async function (id) {
-    await fetch(`/api/admin/deposits/${id}/approve`, { method: 'POST', headers });
+    await fetch(`/api/admin/deposits/${id}/approve`, { method: 'POST' });
     loadPendingDeposits();
 };
 
-loadPendingUsers();
-loadPendingDeposits();
+(async function () {
+    if (await ensureAdmin()) {
+        loadPendingUsers();
+        loadPendingDeposits();
+    }
+})();
 </script>
 </body>
 </html>
