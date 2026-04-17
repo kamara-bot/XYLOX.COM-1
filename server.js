@@ -1,13 +1,27 @@
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const crypto = require('crypto');
 const cookieParser = require('cookie-parser');
+const nodemailer = require('nodemailer');
 const { MongoClient, ObjectId } = require('mongodb');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://Xylox_store:Buttuura@cluster0.bayp373.mongodb.net/?appName=cluster0';
 const COOKIE_SECRET = process.env.COOKIE_SECRET || 'xylox-secret';
+const ADMIN_NOTIFY_EMAIL = process.env.ADMIN_NOTIFY_EMAIL || 'delmedah@gmail.com';
+const EMAIL_FROM = process.env.EMAIL_FROM || 'XYLOX <no-reply@xylox.com>';
+
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: Number(process.env.SMTP_PORT) || 465,
+  secure: process.env.SMTP_SECURE === 'true',
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
 
 app.use(express.json());
 app.use(cookieParser(COOKIE_SECRET));
@@ -64,6 +78,46 @@ app.post('/api/register', async (req, res) => {
     createdAt: new Date()
   };
   const result = await usersCollection.insertOne(newUser);
+
+  const welcomeRecipient = username.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/i) ? username : null;
+  const welcomeBody = `
+    <p>Hello ${name},</p>
+    <p>Thank you for registering on XYLOX.</p>
+    <p>Your account has been created and is awaiting admin approval.</p>
+    <p>We will notify you once your account is approved.</p>
+    <p>Best regards,<br>XYLOX Team</p>
+  `;
+
+  const adminBody = `
+    <p>A new user registered on XYLOX.</p>
+    <ul>
+      <li>Name: ${name}</li>
+      <li>Username: ${username}</li>
+      <li>Registered at: ${new Date().toLocaleString()}</li>
+    </ul>
+    <p>Approve the user in the admin dashboard.</p>
+  `;
+
+  try {
+    if (welcomeRecipient) {
+      await transporter.sendMail({
+        from: EMAIL_FROM,
+        to: welcomeRecipient,
+        subject: 'Welcome to XYLOX',
+        html: welcomeBody,
+      });
+    }
+
+    await transporter.sendMail({
+      from: EMAIL_FROM,
+      to: ADMIN_NOTIFY_EMAIL,
+      subject: 'New user registration',
+      html: adminBody,
+    });
+  } catch (sendError) {
+    console.error('Registration email error:', sendError);
+  }
+
   res.json({ success: true, userId: result.insertedId, message: 'Registration complete. Wait for admin approval.' });
 });
 
